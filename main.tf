@@ -7,9 +7,8 @@ terraform {
   }
 }
 
-# Configure the AWS Provider
-provider "aws" {
-  region = var.region
+locals {
+  App = "sds-nextcloud"
 }
 
 #output "admin_pass" {
