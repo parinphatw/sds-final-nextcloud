@@ -11,6 +11,14 @@ resource "aws_internet_gateway" "IGW" {
 # elastic ip for NAT gateway
 resource "aws_eip" "nateIP" {
   vpc = true
+
+  depends_on = [
+    aws_internet_gateway.IGW
+  ]
+
+  tags = {
+    "Name" = "${local.App}_nat_eip"
+  }
 }
 
 # make the private subnet reach the outside world
