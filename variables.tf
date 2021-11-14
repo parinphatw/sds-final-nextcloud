@@ -62,3 +62,9 @@ variable "private_subnet" {
   description = "The CIDR block for the private subnet"
   type        = string
 }
+
+variable "instance_type" {
+  description = "The type of instance"
+  type        = string
+  default     = "t2.micro"
+}
