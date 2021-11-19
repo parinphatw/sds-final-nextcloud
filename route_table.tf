@@ -1,4 +1,3 @@
-### Route Tables ###
 resource "aws_route_table" "public-route-table" {
   vpc_id = aws_vpc.sds-final-vpc.id
   route {
@@ -10,6 +9,11 @@ resource "aws_route_table" "public-route-table" {
   }
 }
 
+resource "aws_route_table_association" "public-route-table-association" {
+  subnet_id      = aws_subnet.public-subnet.id
+  route_table_id = aws_route_table.public-route-table.id
+}
+
 resource "aws_route_table" "private-route-table" {
   vpc_id = aws_vpc.sds-final-vpc.id
   route {
@@ -19,12 +23,6 @@ resource "aws_route_table" "private-route-table" {
   tags = {
     "Name" = "${local.App}_privateRT"
   }
-}
-
-### Route table && Subnet associations ###
-resource "aws_route_table_association" "public-route-table-association" {
-  subnet_id      = aws_subnet.public-subnet.id
-  route_table_id = aws_route_table.public-route-table.id
 }
 
 resource "aws_route_table_association" "private-route-table-association" {

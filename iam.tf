@@ -1,68 +1,41 @@
-# EC2 IAM
-## profile
-### app
-resource "aws_iam_instance_profile" "app" {
-  name = "${local.App}_app_instance_profile"
-  role = aws_iam_role.app.name
+resource "aws_iam_user" "s3" {
+  name = "${local.App}_s3_iam_user"
+  path = "/storage/"
 
   tags = {
-    "Name" = "${local.App}_app_instance_profile"
+    Name = "${local.App}_iam_user_s3"
   }
 }
-### db
-resource "aws_iam_instance_profile" "db" {
-  name = "${local.App}_db_instance_profile"
-  role = aws_iam_role.db.name
 
-  tags = {
-    Name = "${local.App}_db_instance_profile"
-  }
+resource "aws_iam_policy" "s3" {
+  name   = "nextcloud-s3-all-access-control"
+  policy = data.aws_iam_policy_document.policy.json
 }
-## policy documentation datasource
-data "aws_iam_policy_document" "ec2" {
+
+data "aws_iam_policy_document" "policy" {
   statement {
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
-    }
+    actions   = ["s3:*"]
+    resources = [aws_s3_bucket.bucket.arn, "${aws_s3_bucket.bucket.arn}/*"]
+    effect    = "Allow"
+  }
+  statement {
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+      "kms:GenerateDataKeyWithoutPlaintext",
+      "kms:GenerateDataKeyPairWithoutPlaintext",
+      "kms:GenerateDataKeyPair"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
   }
 }
-## Role
-### app
-resource "aws_iam_role" "app" {
-  name               = "${local.App}_app_iam_role"
-  path               = "/${local.App}/"
-  assume_role_policy = data.aws_iam_policy_document.ec2.json
 
-  tags = {
-    Name = "${local.App}_app_iam_role"
-  }
+resource "aws_iam_user_policy_attachment" "s3" {
+  user       = aws_iam_user.s3.name
+  policy_arn = aws_iam_policy.s3.arn
 }
-### db
-resource "aws_iam_role" "db" {
-  name               = "${local.App}_db_iam_role"
-  path               = "/${local.App}/"
-  assume_role_policy = data.aws_iam_policy_document.ec2.json
 
-  tags = {
-    Name = "${local.App}_db_iam_role"
-  }
+resource "aws_iam_access_key" "s3" {
+  user = aws_iam_user.s3.name
 }
-## core system manager
-### policy
-data "aws_iam_policy" "sys-mng" {
-  name = "AmazonSSMManagedInstanceCore"
-}
-### app policy attachment
-resource "aws_iam_role_policy_attachment" "app_mng" {
-  role       = aws_iam_role.app.name
-  policy_arn = data.aws_iam_policy.sys-mng.arn
-}
-### db policy attachment
-resource "aws_iam_role_policy_attachment" "db_mng" {
-  role       = aws_iam_role.db.name
-  policy_arn = data.aws_iam_policy.sys-mng.arn
-}
-# S3

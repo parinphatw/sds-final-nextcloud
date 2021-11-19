@@ -10,7 +10,3 @@ terraform {
 locals {
   App = "sds-nextcloud"
 }
-
-#output "admin_pass" {
-#  value = var.admin_pass
-#}

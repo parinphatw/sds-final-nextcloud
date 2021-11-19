@@ -6,6 +6,9 @@ resource "aws_subnet" "public-subnet" {
   tags = {
     "Name" = "${local.App}_public_subnet"
   }
+  depends_on = [
+    aws_internet_gateway.IGW
+  ]
 }
 
 resource "aws_subnet" "private-subnet" {

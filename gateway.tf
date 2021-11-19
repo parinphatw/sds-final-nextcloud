@@ -8,24 +8,19 @@ resource "aws_internet_gateway" "IGW" {
   }
 }
 
-# elastic ip for NAT gateway
-resource "aws_eip" "nateIP" {
-  vpc = true
-
-  depends_on = [
-    aws_internet_gateway.IGW
-  ]
-
+# make the private subnet reach the outside world
+resource "aws_nat_gateway" "NGW" {
+  allocation_id = aws_eip.NGW.id
+  subnet_id     = aws_subnet.public-subnet.id
   tags = {
-    "Name" = "${local.App}_nat_eip"
+    "Name" = "${local.App}_ngw"
   }
 }
 
-# make the private subnet reach the outside world
-resource "aws_nat_gateway" "NGW" {
-  allocation_id = aws_eip.nateIP.id
-  subnet_id     = aws_subnet.private-subnet.id
+resource "aws_eip" "NGW" {
+  vpc = true
+
   tags = {
-    "Name" = "${local.App}_ngw"
+    "Name" = "${local.App}_nat_eip"
   }
 }

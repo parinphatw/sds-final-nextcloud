@@ -21,6 +21,7 @@ resource "aws_network_interface" "app-igw" {
 resource "aws_network_interface" "app-db" {
   subnet_id       = aws_subnet.db-connection-subnet.id
   security_groups = [aws_security_group.app-db.id]
+  # private_ips     = ["10.0.3.50"]
   tags = {
     "Name" = "${local.App}_app-db_network-interface"
   }
@@ -29,13 +30,14 @@ resource "aws_network_interface" "app-db" {
 resource "aws_network_interface" "db-app" {
   subnet_id       = aws_subnet.db-connection-subnet.id
   security_groups = [aws_security_group.db-app.id]
+  # private_ips     = ["10.0.3.100"]
   tags = {
     "Name" = "${local.App}_db-app_network-interface"
   }
 }
 
 resource "aws_network_interface" "db-ngw" {
-  subnet_id       = aws_subnet.db-connection-subnet.id
+  subnet_id       = aws_subnet.private-subnet.id
   security_groups = [aws_security_group.db-ngw.id]
   tags = {
     "Name" = "${local.App}_db-ngw_network-interface"
