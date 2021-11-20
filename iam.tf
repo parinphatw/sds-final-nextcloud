@@ -18,17 +18,6 @@ data "aws_iam_policy_document" "policy" {
     resources = [aws_s3_bucket.bucket.arn, "${aws_s3_bucket.bucket.arn}/*"]
     effect    = "Allow"
   }
-  statement {
-    actions = [
-      "kms:Decrypt",
-      "kms:GenerateDataKey",
-      "kms:GenerateDataKeyWithoutPlaintext",
-      "kms:GenerateDataKeyPairWithoutPlaintext",
-      "kms:GenerateDataKeyPair"
-    ]
-    resources = ["*"]
-    effect    = "Allow"
-  }
 }
 
 resource "aws_iam_user_policy_attachment" "s3" {
