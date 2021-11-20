@@ -9,7 +9,7 @@ skip-bind-address" >> /etc/mysql/mariadb.conf.d/50-server.cnf
 
 systemctl restart mariadb
 
-# create user to access
+# SQL: create user to access
 echo "CREATE USER '${database_user}'@'${INSTANCE_PRIVATE_IP}' IDENTIFIED BY '${database_pass}';
 CREATE DATABASE IF NOT EXISTS ${database_name} CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_user}'@'${INSTANCE_PRIVATE_IP}';
